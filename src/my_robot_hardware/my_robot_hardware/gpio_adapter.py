@@ -1,22 +1,23 @@
 import platform
 
 if platform.system() == 'Linux' and 'raspberrypi' in platform.uname().machine:
-    import RPi.GPIO as GPIO
+    from gpiozero import OutputDevice
 else:
-    class FakeGPIO:
-        BCM = 'BCM'
-        OUT = 'OUT'
+    # Define a fake OutputDevice class to simulate gpiozero.OutputDevice
+    class OutputDevice:
+        def __init__(self, pin, active_high=True, initial_value=False):
+            self.pin = pin
+            self.active_high = active_high
+            self.state = initial_value
+            print(f"[FakeOutputDevice] Initialized on pin {pin}, active_high={active_high}, initial_value={initial_value}")
 
-        def setmode(self, mode):
-            print(f"[FakeGPIO] setmode({mode})")
+        def on(self):
+            self.state = True
+            print(f"[FakeOutputDevice] Pin {self.pin} set to {'HIGH' if self.active_high else 'LOW'}")
 
-        def setup(self, pin, mode):
-            print(f"[FakeGPIO] setup(pin={pin}, mode={mode})")
+        def off(self):
+            self.state = False
+            print(f"[FakeOutputDevice] Pin {self.pin} set to {'LOW' if self.active_high else 'HIGH'}")
 
-        def output(self, pin, value):
-            print(f"[FakeGPIO] output(pin={pin}, value={value})")
-
-        def cleanup(self):
-            print("[FakeGPIO] cleanup()")
-
-    GPIO = FakeGPIO()
+        def close(self):
+            print(f"[FakeOutputDevice] Cleaning up pin {self.pin}")
