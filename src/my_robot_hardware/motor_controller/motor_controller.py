@@ -36,6 +36,7 @@ class MotorController(Node):
             GPIO.setup(pin, GPIO.OUT)
             GPIO.output(pin, 0)
 
+        # 28BYJ-48 full steps
         # Stepper motor sequence (half-step sequence for smoother movement)
         self.step_sequence = [
             [1,0,0,0],
@@ -48,10 +49,11 @@ class MotorController(Node):
             #[1,0,0,1]
         ]
         self.steps_len = len(self.step_sequence)
+        self.steps_per_revolution = 32 * 64 #32 steps, but 1/64 gear reduction
 
         # Physical parameters
-        self.wheel_radius = 0.048  # meters
-        self.wheel_separation = 0.2  # placeholder, meters
+        self.wheel_radius = 0.024  # meters
+        self.wheel_separation = 0.025  # placeholder, meters
 
         # Motor speed targets
         self.left_speed = 0.0  # steps per second
@@ -77,10 +79,9 @@ class MotorController(Node):
         self.get_logger().info(f"CmdVel received: v_left = {v_left:.2f} m/s, v_right = {v_right:.2f} m/s")
 
     def mps_to_steps_per_sec(self, velocity_mps):
-        steps_per_revolution = 4096  # 28BYJ-48 full steps
         wheel_circumference = 2 * 3.1416 * self.wheel_radius  # meters
         revolutions_per_sec = velocity_mps / wheel_circumference
-        return revolutions_per_sec * steps_per_revolution
+        return revolutions_per_sec * self.steps_per_revolution
 
     def step_motor(self, motor_pins, step_index, direction):
         sequence_index = step_index if direction >= 0 else (self.steps_len - step_index - 1)
