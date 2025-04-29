@@ -94,10 +94,10 @@ class MotorController(Node):
         update_rate = 0.002  # 2 ms ~ 500 Hz control rate
         while self.running:
             if abs(self.left_speed) > 1.0:
-                self.step_motor(self.left_motor_pins, left_step % self.steps_len, -1.0 * self.left_speed)
+                self.step_motor(self.left_motor_pins, left_step % self.steps_len, self.left_speed)
                 left_step += 1 if self.left_speed > 0 else -1
             if abs(self.right_speed) > 1.0:
-                self.step_motor(self.right_motor_pins, right_step % self.steps_len, self.right_speed)
+                self.step_motor(self.right_motor_pins, right_step % self.steps_len, -1.0 * self.right_speed)
                 right_step += 1 if self.right_speed > 0 else -1
 
             # Delay according to speed
