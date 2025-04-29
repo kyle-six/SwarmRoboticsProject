@@ -2,6 +2,7 @@ import platform
 
 if platform.system() == 'Linux' and 'aarch64' in platform.uname().machine:
     # RPI running Ubuntu 20.04
+    print("Running on a Raspberry Pi system, using real GPIO setup.")
     import RPi.GPIO as GPIO
 else:
     class FakeGPIO:
@@ -19,5 +20,6 @@ else:
 
         def cleanup(self):
             print("[FakeGPIO] cleanup()")
-
+    
+    print("Running on a non-Raspberry Pi system, using mock GPIO setup.")
     GPIO = FakeGPIO()
