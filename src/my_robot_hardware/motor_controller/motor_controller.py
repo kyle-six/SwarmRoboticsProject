@@ -33,8 +33,8 @@ class MotorController(Node):
         GPIO.setmode(GPIO.BCM)
 
         # Define pins (replace with your real pin numbers later)
-        self.left_motor_pins = [4, 17, 27, 22]   # Example GPIO pins for left motor
-        self.right_motor_pins = [5, 6, 13, 19]   # Example GPIO pins for right motor
+        self.left_motor_pins = [17, 18, 22, 23]   # Example GPIO pins for left motor
+        self.right_motor_pins = [19, 20, 21, 26]   # Example GPIO pins for right motor
 
         for pin in self.left_motor_pins + self.right_motor_pins:
             GPIO.setup(pin, GPIO.OUT)
