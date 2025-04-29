@@ -6,7 +6,7 @@ import threading
 import platform
 
 # If not an RPI, adapter module redirects to mock GPIO object
-from my_robot_hardware.gpio_adapter import OutputDevice
+from my_robot_hardware.gpio_adapter import GPIO
 
 if platform.system() == 'Linux' and 'raspberrypi' in platform.uname().machine:
     print("Running on a Raspberry Pi system, using real GPIO setup.")
@@ -30,22 +30,15 @@ class MotorController(Node):
         self.step_sequence = []
 
         # GPIO setup
-        #GPIO.setmode(GPIO.BCM)
+        GPIO.setmode(GPIO.BCM)
 
         # Define pins (replace with your real pin numbers later)
         self.left_motor_pins = [17, 18, 22, 23]   # Example GPIO pins for left motor
         self.right_motor_pins = [19, 20, 21, 26]   # Example GPIO pins for right motor
-        
-        self.left_outputs = []
-        for pin in self.left_motor_pins:
-            new_output = OutputDevice(pin)
-            new_output.off()
-            self.left_outputs.append(new_output)
-        self.right_outputs = []
-        for pin in self.right_motor_pins:
-            new_output = OutputDevice(pin)
-            new_output.off()
-            self.right_outputs.append(new_output)
+
+        for pin in self.left_motor_pins + self.right_motor_pins:
+            GPIO.setup(pin, GPIO.OUT)
+            GPIO.output(pin, 0)
 
         # Stepper motor sequence (half-step sequence for smoother movement)
         self.step_sequence = [
@@ -92,13 +85,10 @@ class MotorController(Node):
         revolutions_per_sec = velocity_mps / wheel_circumference
         return revolutions_per_sec * steps_per_revolution
 
-    def step_motor(self, motor_outputs, step_index, direction):
+    def step_motor(self, motor_pins, step_index, direction):
         sequence_index = step_index if direction >= 0 else (7 - step_index)
-        for output, val in zip(motor_outputs, self.step_sequence[sequence_index]):
-            if val == 1:
-                output.on()
-            else:
-                output.off()
+        for pin, val in zip(motor_pins, self.step_sequence[sequence_index]):
+            GPIO.output(pin, val)
 
     def control_loop(self):
         left_step = 0
@@ -106,10 +96,10 @@ class MotorController(Node):
         update_rate = 0.002  # 2 ms ~ 500 Hz control rate
         while self.running:
             if abs(self.left_speed) > 1.0:
-                self.step_motor(self.left_outputs, left_step % 8, self.left_speed)
+                self.step_motor(self.left_motor_pins, left_step % 8, self.left_speed)
                 left_step += 1 if self.left_speed > 0 else -1
             if abs(self.right_speed) > 1.0:
-                self.step_motor(self.right_outputs, right_step % 8, self.right_speed)
+                self.step_motor(self.right_motor_pins, right_step % 8, self.right_speed)
                 right_step += 1 if self.right_speed > 0 else -1
 
             # Delay according to speed
@@ -123,8 +113,7 @@ class MotorController(Node):
     def destroy_node(self):
         self.running = False
         self.control_thread.join()
-        for o in self.left_outputs + self.right_outputs:
-            o.close()
+        GPIO.cleanup()
         super().destroy_node()
 
 def main(args=None):
