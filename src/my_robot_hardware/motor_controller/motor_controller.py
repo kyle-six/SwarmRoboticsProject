@@ -10,6 +10,10 @@ from my_robot_hardware.gpio_adapter import GPIO
 
 
 class MotorController(Node):
+    
+    _GEAR_REDUCTION_ULN28BYJ_48 = 64     # 64:1 
+    _FULL_STEPS_PER_REV_ULN28BYJ_48 = 32
+    
     def __init__(self):
         super().__init__('motor_controller')
 
@@ -36,20 +40,20 @@ class MotorController(Node):
             GPIO.setup(pin, GPIO.OUT)
             GPIO.output(pin, 0)
 
-        # 28BYJ-48 full steps
-        # Stepper motor sequence (half-step sequence for smoother movement)
+        # 28BYJ-48 full steps for more speed
+        # Stepper motor sequence 
         self.step_sequence = [
             [1,0,0,0],
-            [1,1,0,0],
+            #[1,1,0,0], # uncomment half-step sequence for smoother movement
             [0,1,0,0],
-            [0,1,1,0],
+            #[0,1,1,0],
             [0,0,1,0],
-            [0,0,1,1],
+            #[0,0,1,1],
             [0,0,0,1],
-            [1,0,0,1]
+            #[1,0,0,1]
         ]
         self.steps_len = len(self.step_sequence)
-        self.steps_per_revolution = 64 * 64 #64 steps, but 1/64 gear reduction
+        self.steps_per_revolution = self._FULL_STEPS_PER_REV_ULN28BYJ_48 * self._GEAR_REDUCTION_ULN28BYJ_48 #64 steps, but 1/64 gear reduction
 
         # Physical parameters
         self.wheel_radius = 0.024  # meters
