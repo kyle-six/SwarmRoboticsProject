@@ -51,9 +51,9 @@ class CmdVelKeyboard(Node):
                     elif key == 's':
                         new_twist.linear.x = -self.linear_speed
                     elif key == 'a':
-                        new_twist.angular.z = -self.angular_speed
-                    elif key == 'd':
                         new_twist.angular.z = self.angular_speed
+                    elif key == 'd':
+                        new_twist.angular.z = -self.angular_speed
                     elif key == '+' or key == '=':
                         self.linear_speed += self.speed_step
                         self.angular_speed += self.speed_step

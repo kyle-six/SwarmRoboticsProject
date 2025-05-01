@@ -35,8 +35,8 @@ class MotorController(Node):
         GPIO.setmode(GPIO.BCM)
 
         # Define pins (replace with your real pin numbers later)
-        self.left_motor_pins = [17, 18, 22, 23]   # GPIO pins for left unipolar motor: (A,B,C,D)
-        self.right_motor_pins = [19, 20, 21, 26]   # GPIO pins for right unipolar motor
+        self.left_motor_pins = [26, 21, 20, 19]   # GPIO pins for left unipolar motor: (A,B,C,D)
+        self.right_motor_pins = [23, 22, 18, 17]  # GPIO pins for right unipolar motor
 
         for pin in self.left_motor_pins + self.right_motor_pins:
             GPIO.setup(pin, GPIO.OUT)
@@ -104,7 +104,6 @@ class MotorController(Node):
 
         while self.running:
             now = time.time()
-
             # Left motor stepping
             with self.CMD_LOCK:
                 if abs(self.left_speed) > 1.0:
@@ -113,7 +112,7 @@ class MotorController(Node):
                         self.step_motor(self.left_motor_pins, left_step)
                         left_step += 1 if self.left_speed > 0 else -1
                         last_left_time = now
-
+            now = time.time()
             # Right motor stepping
             with self.CMD_LOCK:
                 if abs(self.right_speed) > 1.0:
