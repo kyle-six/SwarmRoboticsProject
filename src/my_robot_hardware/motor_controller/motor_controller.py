@@ -40,20 +40,20 @@ class MotorController(Node):
         # Stepper motor sequence (half-step sequence for smoother movement)
         self.step_sequence = [
             [1,0,0,0],
-            #[1,1,0,0],
+            [1,1,0,0],
             [0,1,0,0],
-            #[0,1,1,0],
+            [0,1,1,0],
             [0,0,1,0],
-            #[0,0,1,1],
+            [0,0,1,1],
             [0,0,0,1],
-            #[1,0,0,1]
+            [1,0,0,1]
         ]
         self.steps_len = len(self.step_sequence)
-        self.steps_per_revolution = 32 * 64 #32 steps, but 1/64 gear reduction
+        self.steps_per_revolution = 64 * 64 #64 steps, but 1/64 gear reduction
 
         # Physical parameters
         self.wheel_radius = 0.024  # meters
-        self.wheel_separation = 0.025  # placeholder, meters
+        self.wheel_separation = 0.025  # meters
 
         # Motor speed targets
         self.left_speed = 0.0  # steps per second
@@ -76,37 +76,39 @@ class MotorController(Node):
         self.left_speed = self.mps_to_steps_per_sec(v_left)
         self.right_speed = self.mps_to_steps_per_sec(v_right)
 
-        self.get_logger().info(f"CmdVel received: v_left = {v_left:.2f} m/s, v_right = {v_right:.2f} m/s")
+        #self.get_logger().info(f"CmdVel received: v_left = {v_left:.2f} m/s, v_right = {v_right:.2f} m/s")
 
     def mps_to_steps_per_sec(self, velocity_mps):
         wheel_circumference = 2 * 3.1416 * self.wheel_radius  # meters
         revolutions_per_sec = velocity_mps / wheel_circumference
         return revolutions_per_sec * self.steps_per_revolution
 
-    def step_motor(self, motor_pins, step_index, direction):
-        sequence_index = step_index if direction >= 0 else (self.steps_len - step_index - 1)
-        for pin, val in zip(motor_pins, self.step_sequence[sequence_index]):
+    def step_motor(self, motor_pins, step_index):
+        sequence = self.step_sequence[step_index % self.steps_len]
+        for pin, val in zip(motor_pins, sequence):
             GPIO.output(pin, val)
+
 
     def control_loop(self):
         left_step = 0
         right_step = 0
-        update_rate = 0.002  # 2 ms ~ 500 Hz control rate
+        update_rate = 0.002  # 2 ms ~ 500 Hz
         while self.running:
             if abs(self.left_speed) > 1.0:
-                self.step_motor(self.left_motor_pins, left_step % self.steps_len, self.left_speed)
+                self.step_motor(self.left_motor_pins, left_step % self.steps_len)
                 left_step += 1 if self.left_speed > 0 else -1
             if abs(self.right_speed) > 1.0:
-                self.step_motor(self.right_motor_pins, right_step % self.steps_len, -1.0 * self.right_speed)
+                self.step_motor(self.right_motor_pins, right_step % self.steps_len)
                 right_step += 1 if self.right_speed > 0 else -1
 
-            # Delay according to speed
-            if abs(self.left_speed) > 0.1:
-                time.sleep(abs(1.0 / self.left_speed))
-            if abs(self.right_speed) > 0.1:
-                time.sleep(abs(1.0 / self.right_speed))
-                
-            time.sleep(update_rate)
+            # Use max delay to avoid skipping steps
+            step_delay = max(
+                1.0 / abs(self.left_speed) if abs(self.left_speed) > 1.0 else 0.0,
+                1.0 / abs(self.right_speed) if abs(self.right_speed) > 1.0 else 0.0,
+                update_rate
+            )
+            self.get_logger().info(f"Left speed: {self.left_speed:.1f}, Right speed: {self.right_speed:.1f}")
+            time.sleep(step_delay)
 
     def destroy_node(self):
         self.running = False

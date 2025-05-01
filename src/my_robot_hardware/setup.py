@@ -12,7 +12,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/launch', ['launch/hardware.launch.py']),
     ],
-    install_requires=['setuptools', 'RPi.GPIO', 'gpiozero'],
+    install_requires=['setuptools', 'RPi.GPIO'],
     zip_safe=True,
     maintainer='kittputer',
     maintainer_email='kittputer@todo.todo',

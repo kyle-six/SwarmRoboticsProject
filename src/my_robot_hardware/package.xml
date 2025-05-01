@@ -10,7 +10,6 @@
 
   <!-- general dependencies -->
   <depend>python3-rpi.gpio</depend>
-  <depend>python3-gpiozero</depend>
 
   <!-- dependencies for testing -->
   <test_depend>ament_copyright</test_depend>

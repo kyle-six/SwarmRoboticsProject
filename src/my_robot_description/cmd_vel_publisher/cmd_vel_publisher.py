@@ -54,12 +54,12 @@ class CmdVelKeyboard(Node):
                         new_twist.angular.z = self.angular_speed
                     elif key == 'd':
                         new_twist.angular.z = -self.angular_speed
-                    elif key == '+':
+                    elif key == '+' or key == '=':
                         self.linear_speed += self.speed_step
                         self.angular_speed += self.speed_step
                         self.get_logger().info(f"Increased speed: linear={self.linear_speed:.2f}, angular={self.angular_speed:.2f}")
                         velocity_changed = False  # no movement, just speed change
-                    elif key == '-':
+                    elif key == '-' or key == '_':
                         self.linear_speed = max(0.0, self.linear_speed - self.speed_step)
                         self.angular_speed = max(0.0, self.angular_speed - self.speed_step)
                         self.get_logger().info(f"Decreased speed: linear={self.linear_speed:.2f}, angular={self.angular_speed:.2f}")
@@ -80,6 +80,7 @@ class CmdVelKeyboard(Node):
                     self.current_twist = Twist()
 
                 self.publisher.publish(self.current_twist)
+                self.get_logger().info(f"linear={self.current_twist.linear.x:.2f}, angular={self.current_twist.angular.z:.2f}")
 
         except KeyboardInterrupt:
             self.get_logger().info("Keyboard interrupt received. Exiting.")
