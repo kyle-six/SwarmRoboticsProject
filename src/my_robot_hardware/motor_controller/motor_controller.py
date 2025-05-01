@@ -14,6 +14,8 @@ class MotorController(Node):
     _GEAR_REDUCTION_ULN28BYJ_48 = 64     # 64:1 
     _FULL_STEPS_PER_REV_ULN28BYJ_48 = 32
     
+    CMD_LOCK = threading.Lock()
+    
     def __init__(self):
         super().__init__('motor_controller')
 
@@ -33,8 +35,8 @@ class MotorController(Node):
         GPIO.setmode(GPIO.BCM)
 
         # Define pins (replace with your real pin numbers later)
-        self.left_motor_pins = [17, 18, 22, 23]   # Example GPIO pins for left motor
-        self.right_motor_pins = [19, 20, 21, 26]   # Example GPIO pins for right motor
+        self.left_motor_pins = [17, 18, 22, 23]   # GPIO pins for left unipolar motor: (A,B,C,D)
+        self.right_motor_pins = [19, 20, 21, 26]   # GPIO pins for right unipolar motor
 
         for pin in self.left_motor_pins + self.right_motor_pins:
             GPIO.setup(pin, GPIO.OUT)
@@ -57,7 +59,7 @@ class MotorController(Node):
 
         # Physical parameters
         self.wheel_radius = 0.024  # meters
-        self.wheel_separation = 0.025  # meters
+        self.wheel_separation = 0.070  # meters
 
         # Motor speed targets
         self.left_speed = 0.0  # steps per second
@@ -76,9 +78,10 @@ class MotorController(Node):
         v_left = linear_x - (angular_z * self.wheel_separation / 2.0)
         v_right = linear_x + (angular_z * self.wheel_separation / 2.0)
 
-        # Convert m/s to steps/s
-        self.left_speed = self.mps_to_steps_per_sec(v_left)
-        self.right_speed = self.mps_to_steps_per_sec(v_right)
+        with self.CMD_LOCK:
+             # Convert m/s to steps/s
+            self.left_speed = self.mps_to_steps_per_sec(v_left)
+            self.right_speed = self.mps_to_steps_per_sec(v_right)
 
         #self.get_logger().info(f"CmdVel received: v_left = {v_left:.2f} m/s, v_right = {v_right:.2f} m/s")
 
@@ -103,24 +106,26 @@ class MotorController(Node):
             now = time.time()
 
             # Left motor stepping
-            if abs(self.left_speed) > 1.0:
-                left_interval = 1.0 / abs(self.left_speed)
-                if (now - last_left_time) >= left_interval:
-                    self.step_motor(self.left_motor_pins, left_step)
-                    left_step += 1 if self.left_speed > 0 else -1
-                    last_left_time = now
+            with self.CMD_LOCK:
+                if abs(self.left_speed) > 1.0:
+                    left_interval = 1.0 / abs(self.left_speed)
+                    if (now - last_left_time) >= left_interval:
+                        self.step_motor(self.left_motor_pins, left_step)
+                        left_step += 1 if self.left_speed > 0 else -1
+                        last_left_time = now
 
             # Right motor stepping
-            if abs(self.right_speed) > 1.0:
-                right_interval = 1.0 / abs(self.right_speed)
-                if (now - last_right_time) >= right_interval:
-                    self.step_motor(self.right_motor_pins, right_step)
-                    right_step += 1 if self.right_speed > 0 else -1
-                    last_right_time = now
+            with self.CMD_LOCK:
+                if abs(self.right_speed) > 1.0:
+                    right_interval = 1.0 / abs(self.right_speed)
+                    if (now - last_right_time) >= right_interval:
+                        self.step_motor(self.right_motor_pins, right_step)
+                        right_step += 1 if self.right_speed > 0 else -1
+                        last_right_time = now
 
             # Small sleep to reduce CPU usage
-            time.sleep(0.001)
-            self.get_logger().info(f"Left speed: {self.left_speed:.1f}, Right speed: {self.right_speed:.1f}")
+            #time.sleep(0.001)
+            #self.get_logger().info(f"Left speed: {self.left_speed:.1f}, Right speed: {self.right_speed:.1f}")
 
     def destroy_node(self):
         self.running = False

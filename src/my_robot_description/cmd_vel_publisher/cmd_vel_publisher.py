@@ -16,10 +16,10 @@ class CmdVelKeyboard(Node):
         self.old_attr = termios.tcgetattr(sys.stdin)
         tty.setcbreak(sys.stdin.fileno())
 
-        # Initial speeds
-        self.linear_speed = 0.2
-        self.angular_speed = 0.5
-        self.speed_step = 0.05
+        # Initial speeds (IN METERS/SEC)
+        self.linear_speed = 0.01 #10mm/sec
+        self.angular_speed = 0.01 #10mm/sec
+        self.speed_step = 0.005
 
         self.current_twist = Twist()
         self.last_key_time = self.get_clock().now()
