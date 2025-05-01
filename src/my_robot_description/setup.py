@@ -5,7 +5,7 @@ package_name = 'my_robot_description'
 setup(
     name=package_name,
     version='0.0.1',
-    packages=[package_name, "cmd_vel_publisher"],
+    packages=[package_name, "cmd_vel_keyboard", "cmd_vel_keyboard_tank"],
     data_files=[
         ('share/ament_index/resource_index/packages',
          ['resource/' + package_name]),
@@ -23,7 +23,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
     'console_scripts': [
-        'cmd_vel_publisher = cmd_vel_publisher.cmd_vel_publisher:main'
+        'cmd_vel_keyboard = cmd_vel_keyboard.cmd_vel_keyboard:main',
+        'cmd_vel_keyboard_tank = cmd_vel_keyboard_tank.cmd_vel_keyboard_tank:main'
     ],
 },
 )
