@@ -38,13 +38,6 @@ def generate_launch_description():
         output='screen',
         parameters=[{'use_gui': False}]
     )
-    
-    # cmd_vel_publisher_node = Node(
-    #     package='my_robot_description',
-    #     executable='cmd_vel_publisher',
-    #     name='cmd_vel_publisher',
-    #     output='screen',
-    # ),
 
     rviz_node = Node(
         condition=IfCondition(LaunchConfiguration('use_rviz')),
@@ -59,6 +52,5 @@ def generate_launch_description():
         use_rviz_arg,
         joint_state_publisher_node,
         robot_state_publisher_node,
-        #cmd_vel_publisher_node,
         rviz_node
     ])

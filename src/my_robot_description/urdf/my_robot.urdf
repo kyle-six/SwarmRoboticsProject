@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<robot name="my_robot">
+<robot name="my_robot" xmlns:xacro="http://ros.org/wiki/xacro">
+
   <!-- Base link -->
   <link name="base_link">
     <visual>
@@ -15,6 +16,11 @@
         <box size="0.118 0.039 0.05" />
       </geometry>
     </collision>
+    <inertial>
+      <mass value="0.5"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+    </inertial>
   </link>
 
   <!-- Left wheel -->
@@ -62,14 +68,48 @@
     <parent link="base_link"/>
     <child link="left_wheel_link"/>
     <origin xyz="0 0.038 -0.010" rpy="1.57 0 0"/>
-    <axis xyz="0 1 0"/>
+    <axis xyz="0 0 1"/>
   </joint>
 
   <joint name="right_wheel_joint" type="continuous">
     <parent link="base_link"/>
     <child link="right_wheel_link"/>
     <origin xyz="0 -0.038 -0.010" rpy="1.57 0 0"/>
-    <axis xyz="0 1 0"/>
+    <axis xyz="0 0 1"/>
   </joint>
+
+  <!-- Gazebo wheel friction settings -->
+  <gazebo reference="left_wheel_link">
+    <mu1>1.0</mu1>
+    <mu2>1.0</mu2>
+    <kp>100000</kp>
+    <kd>1.0</kd>
+  </gazebo>
+
+  <gazebo reference="right_wheel_link">
+    <mu1>1.0</mu1>
+    <mu2>1.0</mu2>
+    <kp>100000</kp>
+    <kd>1.0</kd>
+  </gazebo>
+
+  <!-- Gazebo differential drive plugin -->
+  <gazebo>
+    <plugin name="gazebo_ros_diff_drive" filename="libgazebo_ros_diff_drive.so">
+      <ros>
+        <namespace>/</namespace>
+      </ros>
+      <update_rate>50</update_rate>
+      <left_joint>left_wheel_joint</left_joint>
+      <right_joint>right_wheel_joint</right_joint>
+      <wheel_separation>0.076</wheel_separation> <!-- 0.038 + 0.038 -->
+      <wheel_radius>0.024</wheel_radius>
+      <command_topic>/cmd_vel</command_topic>
+      <odometry_topic>odom</odometry_topic>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_link</robot_base_frame>
+      <publish_tf>true</publish_tf>
+    </plugin>
+  </gazebo>
 
 </robot>
