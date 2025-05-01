@@ -92,23 +92,31 @@ class MotorController(Node):
     def control_loop(self):
         left_step = 0
         right_step = 0
-        update_rate = 0.002  # 2 ms ~ 500 Hz
-        while self.running:
-            if abs(self.left_speed) > 1.0:
-                self.step_motor(self.left_motor_pins, left_step % self.steps_len)
-                left_step += 1 if self.left_speed > 0 else -1
-            if abs(self.right_speed) > 1.0:
-                self.step_motor(self.right_motor_pins, right_step % self.steps_len)
-                right_step += 1 if self.right_speed > 0 else -1
+        last_left_time = time.time()
+        last_right_time = time.time()
 
-            # Use max delay to avoid skipping steps
-            step_delay = max(
-                1.0 / abs(self.left_speed) if abs(self.left_speed) > 1.0 else 0.0,
-                1.0 / abs(self.right_speed) if abs(self.right_speed) > 1.0 else 0.0,
-                update_rate
-            )
+        while self.running:
+            now = time.time()
+
+            # Left motor stepping
+            if abs(self.left_speed) > 1.0:
+                left_interval = 1.0 / abs(self.left_speed)
+                if (now - last_left_time) >= left_interval:
+                    self.step_motor(self.left_motor_pins, left_step)
+                    left_step += 1 if self.left_speed > 0 else -1
+                    last_left_time = now
+
+            # Right motor stepping
+            if abs(self.right_speed) > 1.0:
+                right_interval = 1.0 / abs(self.right_speed)
+                if (now - last_right_time) >= right_interval:
+                    self.step_motor(self.right_motor_pins, right_step)
+                    right_step += 1 if self.right_speed > 0 else -1
+                    last_right_time = now
+
+            # Small sleep to reduce CPU usage
+            time.sleep(0.001)
             self.get_logger().info(f"Left speed: {self.left_speed:.1f}, Right speed: {self.right_speed:.1f}")
-            time.sleep(step_delay)
 
     def destroy_node(self):
         self.running = False
