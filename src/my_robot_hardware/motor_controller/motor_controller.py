@@ -72,7 +72,7 @@ class MotorController(Node):
 
     def cmd_vel_callback(self, msg):
         linear_x = msg.linear.x
-        angular_z = msg.angular.z
+        angular_z = msg.angular.z * 100
 
         # Differential drive kinematics
         v_left = linear_x - (angular_z * self.wheel_separation / 2.0)
