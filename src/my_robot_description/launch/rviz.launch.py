@@ -15,7 +15,7 @@ def generate_launch_description():
 
     # Paths to important files
     description_package_path = Path(__file__).parent.parent
-    urdf_file = description_package_path / 'urdf' / 'my_robot.urdf'
+    urdf_file = description_package_path / 'urdf' / 'my_robot.urdf.xacro'
     rviz_file = description_package_path / 'rviz' / 'my_robot.rviz'
 
     # Read the URDF into a string

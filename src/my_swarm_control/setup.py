@@ -1,19 +1,17 @@
 from setuptools import setup
 
-package_name = 'my_robot_hardware'
+package_name = 'my_swarm_control'
 
 setup(
     name=package_name,
     version='0.0.0',
-    packages=[package_name, 'motor_controller', 'wifi_mesh_node'],
+    packages=[package_name],
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        ('share/' + package_name + '/launch', ['launch/hardware.launch.py']),
-        ('share/' + package_name + '/launch', ['launch/wifi_mesh.launch.py']),
     ],
-    install_requires=['setuptools', 'RPi.GPIO'],
+    install_requires=['setuptools'],
     zip_safe=True,
     maintainer='kittputer',
     maintainer_email='kittputer@todo.todo',
@@ -21,9 +19,8 @@ setup(
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
-    'console_scripts': [
-        'motor_controller = motor_controller.motor_controller:main',
-        'wifi_mesh_node = wifi_mesh_node.wifi_mesh_node:main',
-    ],
+        'console_scripts': [
+            'swarm_controller = my_swarm_control.swarm_controller:main',
+        ],
     },
 )

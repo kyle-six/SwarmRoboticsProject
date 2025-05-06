@@ -12,7 +12,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/launch', ['launch/rviz.launch.py']),
         ('share/' + package_name + '/launch', ['launch/gazebo.launch.py']),
-        ('share/' + package_name + '/urdf', ['urdf/my_robot.urdf']),
+        ('share/' + package_name + '/urdf', ['urdf/my_robot.urdf.xacro']),
         ('share/' + package_name + '/rviz', ['rviz/my_robot.rviz'])
     ],
     install_requires=['setuptools'],

@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <robot name="my_robot" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:property name="prefix" value="" />
+
 
   <!-- Base link -->
-  <link name="base_link">
+  <link name="${prefix}base_link">
     <visual>
       <geometry>
         <box size="0.118 0.039 0.05" />
@@ -24,7 +26,7 @@
   </link>
 
   <!-- Left wheel -->
-  <link name="left_wheel_link">
+  <link name="${prefix}left_wheel_link">
     <visual>
       <geometry>
         <cylinder radius="0.024" length="0.025" />
@@ -45,7 +47,7 @@
   </link>
 
   <!-- Right wheel -->
-  <link name="right_wheel_link">
+  <link name="${prefix}right_wheel_link">
     <visual>
       <geometry>
         <cylinder radius="0.024" length="0.025" />
@@ -64,29 +66,29 @@
   </link>
 
   <!-- Joints -->
-  <joint name="left_wheel_joint" type="continuous">
-    <parent link="base_link"/>
-    <child link="left_wheel_link"/>
+  <joint name="${prefix}left_wheel_joint" type="continuous">
+    <parent link="${prefix}base_link"/>
+    <child link="${prefix}left_wheel_link"/>
     <origin xyz="0 0.038 -0.010" rpy="1.57 0 0"/>
     <axis xyz="0 0 1"/>
   </joint>
 
-  <joint name="right_wheel_joint" type="continuous">
-    <parent link="base_link"/>
-    <child link="right_wheel_link"/>
+  <joint name="${prefix}right_wheel_joint" type="continuous">
+    <parent link="${prefix}base_link"/>
+    <child link="${prefix}right_wheel_link"/>
     <origin xyz="0 -0.038 -0.010" rpy="1.57 0 0"/>
     <axis xyz="0 0 1"/>
   </joint>
 
   <!-- Gazebo wheel friction settings -->
-  <gazebo reference="left_wheel_link">
+  <gazebo reference="${prefix}left_wheel_joint">
     <mu1>1.0</mu1>
     <mu2>1.0</mu2>
     <kp>100000</kp>
     <kd>1.0</kd>
   </gazebo>
 
-  <gazebo reference="right_wheel_link">
+  <gazebo reference="${prefix}right_wheel_joint">
     <mu1>1.0</mu1>
     <mu2>1.0</mu2>
     <kp>100000</kp>
@@ -100,14 +102,14 @@
         <namespace>/</namespace>
       </ros>
       <update_rate>50</update_rate>
-      <left_joint>left_wheel_joint</left_joint>
-      <right_joint>right_wheel_joint</right_joint>
+      <left_joint>${prefix}left_wheel_joint</left_joint>
+      <right_joint>${prefix}right_wheel_joint</right_joint>
       <wheel_separation>0.076</wheel_separation> <!-- 0.038 + 0.038 -->
       <wheel_radius>0.024</wheel_radius>
-      <command_topic>/cmd_vel</command_topic>
+      <command_topic>cmd_vel</command_topic>
       <odometry_topic>odom</odometry_topic>
-      <odometry_frame>odom</odometry_frame>
-      <robot_base_frame>base_link</robot_base_frame>
+      <odometry_frame>${prefix}odom</odometry_frame>
+      <robot_base_frame>${prefix}base_link</robot_base_frame>
       <publish_tf>true</publish_tf>
     </plugin>
   </gazebo>
