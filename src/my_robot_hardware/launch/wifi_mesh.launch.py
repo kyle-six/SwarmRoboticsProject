@@ -5,8 +5,10 @@ def generate_launch_description():
     return LaunchDescription([
         Node(
             package='my_robot_hardware',
-            executable='wifi_mesh_node',
-            name='wifi_mesh_node',
+            executable='wifi_ibss_node',
+            name='wifi_ibss_node',
+            namespace='robot1',  # TODO Change per robot
+            parameters=[{'interface': 'wlan0'}],
             output='screen'
         )
     ])

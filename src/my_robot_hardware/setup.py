@@ -5,7 +5,7 @@ package_name = 'my_robot_hardware'
 setup(
     name=package_name,
     version='0.0.0',
-    packages=[package_name, 'motor_controller', 'wifi_mesh_node'],
+    packages=[package_name, 'motor_controller', 'wifi_mesh_node', 'wifi_ibss_node'],
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
@@ -24,6 +24,7 @@ setup(
     'console_scripts': [
         'motor_controller = motor_controller.motor_controller:main',
         'wifi_mesh_node = wifi_mesh_node.wifi_mesh_node:main',
+        'wifi_ibss_node = wifi_ibss_node.wifi_ibss_node:main',
     ],
     },
 )
