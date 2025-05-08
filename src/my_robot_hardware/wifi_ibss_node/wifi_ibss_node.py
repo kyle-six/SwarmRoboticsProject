@@ -17,7 +17,7 @@ KNOWN_PEERS = {
 class WifiIBSSNode(Node):
     def __init__(self):
         super().__init__('wifi_ibss_node')
-        self.declare_parameter('interface', 'wlan0')
+        self.declare_parameter('interface', 'wlan1')
         self.interface = self.get_parameter('interface').get_parameter_value().string_value
         self.publisher = self.create_publisher(DiagnosticArray, 'wifi_neighbors', 10)
         self.timer = self.create_timer(5.0, self.publish_signal_strengths)

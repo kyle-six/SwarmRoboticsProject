@@ -10,7 +10,7 @@ class WifiMeshNode(Node):
     def __init__(self):
         super().__init__('wifi_mesh_node')
 
-        self.interface = 'wlan0'
+        self.interface = 'wlan1'
         self.mesh_iface = 'mesh0'
         self.bat_iface = 'bat0'
         self.mesh_id = 'my_robot_mesh'

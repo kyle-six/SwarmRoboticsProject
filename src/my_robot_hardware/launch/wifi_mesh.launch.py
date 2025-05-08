@@ -8,7 +8,7 @@ def generate_launch_description():
             executable='wifi_ibss_node',
             name='wifi_ibss_node',
             namespace='robot1',  # TODO Change per robot
-            parameters=[{'interface': 'wlan0'}],
+            parameters=[{'interface': 'wlan1'}],
             output='screen'
         )
     ])
