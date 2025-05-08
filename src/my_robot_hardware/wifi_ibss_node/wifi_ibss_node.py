@@ -45,14 +45,27 @@ class WifiIBSSNode(Node):
     def get_signal_strengths(self):
         neighbors = {}
         try:
-            output = subprocess.check_output(['iwconfig', self.interface], text=True)
-            signal_match = re.search(r'Signal level=(-?\d+) dBm', output)
-            if signal_match:
-                # IBSS mode often only gives one peer’s signal strength
-                # if more are connected, use iw dev wlan0 station dump (less reliable in IBSS)
-                neighbors['unknown'] = int(signal_match.group(1))
+            output = subprocess.check_output(
+                ['iw', 'dev', self.interface, 'station', 'dump'], text=True
+            )
+            blocks = output.strip().split('\n\n')  # Each station info block is separated
+
+            for block in blocks:
+                lines = block.splitlines()
+                mac = None
+                signal = None
+                for line in lines:
+                    if line.startswith('Station '):
+                        mac = line.split()[1].lower()
+                    elif 'signal:' in line:
+                        match = re.search(r'signal:\s*(-?\d+)', line)
+                        if match:
+                            signal = int(match.group(1))
+                if mac and signal is not None:
+                    neighbors[mac] = signal
+
         except subprocess.CalledProcessError as e:
-            self.get_logger().error(f"iwconfig failed: {e}")
+            self.get_logger().error(f"iw station dump failed: {e}")
         return neighbors
 
 def main(args=None):

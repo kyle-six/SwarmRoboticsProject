@@ -30,6 +30,7 @@ class WiFiNeighborsAggregator(Node):
     def log_neighbors(self):
         self.get_logger().info("=== Aggregated WiFi Neighbors ===")
         for robot, msg in self.neighbor_data.items():
+            self.get_logger().info(f"= {robot} =")
             for status in msg.status:
                 neighbors = [f"{kv.key}:{kv.value}" for kv in status.values]
                 self.get_logger().info(f"{robot} sees: {', '.join(neighbors)}")
