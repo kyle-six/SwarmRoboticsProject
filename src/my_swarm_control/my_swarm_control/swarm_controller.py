@@ -47,7 +47,7 @@ class SwarmController(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    robot_names = ['robot1', 'robot2']
+    robot_names = ['robot1', 'robot2', 'robot3']
     controller = SwarmController(robot_names)
     rclpy.spin(controller)
     controller.destroy_node()
