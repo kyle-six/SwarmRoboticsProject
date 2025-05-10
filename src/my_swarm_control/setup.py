@@ -23,6 +23,7 @@ setup(
         'console_scripts': [
             'swarm_controller = my_swarm_control.swarm_controller:main',
             'wifi_aggregator = wifi_neighbors_aggregator.wifi_neighbors_aggregator:main',
+            'fake_robot_simulator = my_swarm_control.fake_robot_simulator:main',
         ],
     },
 )
