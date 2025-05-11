@@ -1,4 +1,5 @@
 import numpy as np
+import random
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import math
@@ -8,7 +9,7 @@ lower_threshold = 7  # Minimum distance to freeze
 upper_threshold = 8  # Maximum allowed distance
 robot_speed = 0.1    # Movement speed
 turn_angle = 45      # Degrees (45° increments)
-max_steps = 500      # Increased maximum animation frames
+max_steps = 150      # Increased maximum animation frames
 
 class Robot:
     def __init__(self, x, y, color):
@@ -39,9 +40,12 @@ class Robot:
 
 # Initialize robots
 robots = [
-    Robot(0, 1, 'red'),
-    Robot(-1, -1, 'blue'),
-    Robot(1, -1, 'green')
+    # Robot(0, 1, 'red'),
+    # Robot(-1, -1, 'blue'),
+    # Robot(1, -1, 'green')
+    Robot(random.randint(-2,2), random.randint(-2,2), 'red'),
+    Robot(random.randint(-2,2), random.randint(-2,2), 'blue'),
+    Robot(random.randint(-2,2), random.randint(-2,2), 'green')
 ]
 
 def update(frame):
