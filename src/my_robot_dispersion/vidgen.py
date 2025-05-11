@@ -194,7 +194,7 @@ def create_simulation(ax):
 # Create a 2x2 grid of animations
 fig = plt.figure(figsize=(12, 10))
 gs = GridSpec(2, 2, figure=fig)
-fig.suptitle('Robot Dispersion Simulations (4 instances)', fontsize=14)
+fig.suptitle('Simulations', fontsize=14)
 
 # Create axes and animations
 ax1 = fig.add_subplot(gs[0, 0])
